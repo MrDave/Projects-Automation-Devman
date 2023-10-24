@@ -20,6 +20,7 @@ class Project(models.Model):
 
 class Student(models.Model):
     name = models.CharField("имя студента", max_length=200)
+    telegram_id = models.CharField("telegram ID", max_length=80, blank=True)
     STUDENT_LEVELS = [
         ("newbie", "новичок"),
         ("newbie+", "новичок+"),
@@ -32,6 +33,7 @@ class Student(models.Model):
         verbose_name="текущий проект",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="students"
     )
 

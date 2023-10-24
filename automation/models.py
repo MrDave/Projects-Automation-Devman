@@ -12,6 +12,7 @@ class Project(models.Model):
         null=True,
         related_name="projects"
     )
+    call_time = models.TimeField("время созвона", null=True)
 
     def __str__(self):
         return f"{self.topic} - {self.start_date}"

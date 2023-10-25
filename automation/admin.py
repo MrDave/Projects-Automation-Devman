@@ -12,7 +12,6 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "level",
-        "is_from_far_east",
     )
 
 

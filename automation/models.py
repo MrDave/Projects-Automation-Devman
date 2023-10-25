@@ -27,7 +27,6 @@ class Student(models.Model):
         ("junior", "джун"),
     ]
     level = models.CharField("уровень студента", choices=STUDENT_LEVELS, default="newbie", max_length=8)
-    is_from_far_east = models.BooleanField("студент с Дальнего Востока", default=False)
     current_project = models.ForeignKey(
         Project,
         verbose_name="текущий проект",

@@ -2,6 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class ProjectManager(models.Model):
+    name = models.CharField("имя", max_length=80)
+    telegram_id = models.CharField("telegram ID", max_length=80, blank=True)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+
+
 class Project(models.Model):
     start_date = models.DateField("дата начала")
     topic = models.CharField("тема проекта", max_length=80)

@@ -1,10 +1,5 @@
 from django.contrib import admin
-from .models import Student, Project
-
-
-class StudentsInline(admin.TabularInline):
-    model = Student
-    extra = 0
+from .models import Student, Project, StudyGroup, ProjectManager
 
 
 @admin.register(Student)
@@ -12,12 +7,19 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "level",
-        "is_from_far_east",
     )
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    inlines = [
-        StudentsInline
-    ]
+    pass
+
+
+@admin.register(StudyGroup)
+class StudyGroupAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ProjectManager)
+class ProjectManagerAdmin(admin.ModelAdmin):
+    pass

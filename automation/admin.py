@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, Project, StudyGroup
+from .models import Student, Project, StudyGroup, ProjectManager
 
 
 @admin.register(Student)
@@ -17,4 +17,9 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(StudyGroup)
 class StudyGroupAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ProjectManager)
+class ProjectManagerAdmin(admin.ModelAdmin):
     pass

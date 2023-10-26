@@ -29,6 +29,7 @@ class Student(models.Model):
         ("junior", "джун"),
     ]
     level = models.CharField("уровень студента", choices=STUDENT_LEVELS, default="newbie", max_length=12)
+
     TIME_CHOICES = [
         (datetime.time(9, 0), "9:00"),
         (datetime.time(9, 30), "9:30"),
@@ -48,8 +49,13 @@ class Student(models.Model):
         (datetime.time(22, 0), "22:00"),
         (datetime.time(22, 30), "22:30"),
         (datetime.time(23, 0), "23:00"),
+        (datetime.time(0, 0), "любое время"),
     ]
-    preferred_time = models.TimeField(choices=TIME_CHOICES)
+    preferred_time = models.TimeField(
+        verbose_name="предпочитаемое время созвона",
+        choices=TIME_CHOICES,
+        default=datetime.time(0, 0)
+    )
 
     def __str__(self):
         return self.name

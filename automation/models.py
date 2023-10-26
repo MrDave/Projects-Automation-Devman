@@ -53,14 +53,11 @@ class StudyGroup(models.Model):
 
     project = models.ForeignKey(Project, verbose_name="проект", on_delete=models.CASCADE, related_name="groups")
     manager = models.ForeignKey(ProjectManager, verbose_name="менеджер", on_delete=models.SET_NULL, null=True)
-    call_time = models.ForeignKey(StudyingTime,
-                                  on_delete=models.CASCADE,
-                                 )
-
-    call_day = models.DateTimeField(verbose_name='День созвона')
+    call_time = models.ForeignKey(StudyingTime, on_delete=models.SET_NULL)
+    call_day = models.DateTimeField(verbose_name="день созвона")
 
     def __str__(self):
-        return f"{self.name} - {self.pmanager}"
+        return f"{self.name} - {self.manager}"
 
 
 class Student(models.Model):
@@ -82,4 +79,4 @@ class Student(models.Model):
     )
 
     def __str__(self):
-        return self.user
+        return str(self.user)

@@ -1,31 +1,24 @@
-import datetime
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models import EmailField
+import datetime
+
 
 class DevmanUser(models.Model):
     telegram_id = models.PositiveBigIntegerField(verbose_name='Telegram ID')
     first_name = models.CharField(max_length=40, verbose_name='Имя', null=True)
-    created_at = models.DateTimeField(verbose_name='Время регистрации', auto_now_add=True)
-    email = models.EmailField(max_length=150, default="", null=True, blank=True)
-    #поле is_valid - необходимо для того, чтобы "случайные" пользователи или роботы-боты - не попадали сюда,
+    email = models.EmailField(blank=True)
+    # поле is_valid - необходимо для того, чтобы "случайные" пользователи или роботы-боты - не попадали сюда,
     # нужно будет доделать логику обработки этого поля, пока попадают ВСЕ !!!
     is_valid = models.BooleanField(default=True, null=True, blank=True)
+
     def __str__(self):
         return f"{self.first_name} - {self.telegram_id}"
 
+
 class Project(models.Model):
     topic = models.CharField("тема проекта", max_length=80)
-    project_manager = models.ForeignKey(
-        User,
-        verbose_name="менеджер",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="projects"
-    )
 
     def __str__(self):
-        return f"{self.topic} - {self.project_manager}"
+        return self.topic
 
 
 class StudyingTime(models.Model):
@@ -47,51 +40,19 @@ class StudyingTime(models.Model):
         return f"{self.start_time}"
 
 
-class Pm(DevmanUser):
+class ProjectManager(DevmanUser):
     info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
+
     def __str__(self):
         return f"{self.first_name}"
 
 
-class Students(models.Model):
-    USER_ROLE_CHOICES = (
-        ("newbie", "новичок"),
-        ("newbie+", "новичок+"),
-        ("junior", "джун"),
-    )
-    name = models.ForeignKey(DevmanUser, on_delete=models.CASCADE, related_name="devman_user")
-    # name = models.ForeignKey(DevmanUser, on_delete=models.CASCADE, null=False)
-    type = models.CharField(max_length=40, verbose_name='Роль', choices=USER_ROLE_CHOICES, null=True, blank=True)
-    start = models.ForeignKey(StudyingTime, on_delete=models.CASCADE)
-    info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.name} - {self.type}"
-
-
-    class Meta:
-        verbose_name = 'Ученик'
-        verbose_name_plural = 'Ученики'
-
-
-class Team(models.Model):
+class StudyGroup(models.Model):
 
     name = models.CharField(max_length=40, verbose_name='Название команды', null=True, blank=True)
 
-    project = models.ForeignKey(Project,
-                                on_delete=models.CASCADE,
-                                )
-
-    pmanager = models.ForeignKey(Pm,
-                                 on_delete=models.CASCADE,
-                                )
-
-    student = models.ForeignKey(Students,
-                                on_delete=models.CASCADE,
-                                verbose_name='Ученики',
-                                related_name='students',
-                                )
-
+    project = models.ForeignKey(Project, verbose_name="проект", on_delete=models.CASCADE, related_name="groups")
+    manager = models.ForeignKey(ProjectManager, verbose_name="менеджер", on_delete=models.SET_NULL, null=True)
     call_time = models.ForeignKey(StudyingTime,
                                   on_delete=models.CASCADE,
                                  )
@@ -102,7 +63,23 @@ class Team(models.Model):
         return f"{self.name} - {self.pmanager}"
 
 
-    # def save(self, *args, **kwargs):
-    #     if SomeModel.objects.count() < settings.MAX_SOMEMODEL_COUNT:
-    #         super().save(*args, **kwargs)
-    #     raise ValidationError('Слишком много записей типа SomeModel!')
+class Student(models.Model):
+    STUDENT_LEVELS = [
+        ("newbie", "новичок"),
+        ("newbie_plus", "новичок+"),
+        ("junior", "джун"),
+    ]
+    user = models.ForeignKey(DevmanUser, on_delete=models.CASCADE, related_name="devman_user")
+    level = models.CharField("уровень студента", choices=STUDENT_LEVELS, default="newbie", max_length=12)
+    preferred_time = models.ForeignKey(StudyingTime, on_delete=models.SET_DEFAULT, default="любое время")
+    info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
+    current_group = models.ForeignKey(
+        StudyGroup,
+        verbose_name="текущая группа",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="groups"
+    )
+
+    def __str__(self):
+        return self.user

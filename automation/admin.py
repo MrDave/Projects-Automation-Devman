@@ -1,44 +1,39 @@
 from django.contrib import admin
-
-from .models import *
-
-
-class StudentsInline(admin.TabularInline):
-    model = Students
-    extra = 0
+from .models import Student, Project, StudyGroup, ProjectManager, DevmanUser, StudyingTime
 
 
-@admin.register(Students)
+@admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = (
-        "name",
-        "type",
-        "start",
+        "user",
+        "level",
     )
 
 
 @admin.register(DevmanUser)
-class AllDevmanUser(admin.ModelAdmin):
+class DevmanUserAdmin(admin.ModelAdmin):
     list_display = (
         "telegram_id",
         "first_name",
-        "created_at",
         "email",
     )
 
 
-@admin.register(Team)
-class StudentTeam(admin.ModelAdmin):
-    list_display = (
-        "name",
-        "project",
-        "call_time",
-    )
+@admin.register(StudyGroup)
+class StudyGroupAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('topic' , 'project_manager')
+    pass
 
-admin.site.register(Pm)
-admin.site.register(StudyingTime)
+
+@admin.register(ProjectManager)
+class ProjectManagerAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(StudyingTime)
+class StudyingTimeAdmin(admin.ModelAdmin):
+    pass

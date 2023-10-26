@@ -49,7 +49,7 @@ async def start_command_handler(message: Message):
         await sync_to_async(user_id.save)()
         await bot.send_message(message.from_user.id, f'Привет {message.from_user.first_name}\nВас приветствует учебный бот DEVMAN', reply_markup=main_menu)
     else:
-        if await sync_to_async(Pm.objects.filter(telegram_id=int(message.from_user.id)).first)():
+        if await sync_to_async(ProjectManager.objects.filter(telegram_id=int(message.from_user.id)).first)():
         # это ПМ
             await bot.send_message(message.from_user.id,
                                    f'Привет {message.from_user.first_name}',
@@ -92,7 +92,7 @@ async def get_time_handler(callback: CallbackQuery):
 
     info = f'Студент создан {datetime.datetime.now()}.\nУказал удобное время {start_time}'
     # type = 'newbie' т.к. это уровень задаст ПМ в админке
-    student = Students(name=user_name, type='newbie', start=start_time, info=info)
+    student = Student(name=user_name, type='newbie', start=start_time, info=info)
     await sync_to_async(student.save)()
     await bot.send_message(callback.from_user.id, info)
 

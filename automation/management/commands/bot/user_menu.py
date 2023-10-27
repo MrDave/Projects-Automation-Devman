@@ -17,6 +17,16 @@ async def get_times_shedule():
     builder.row(*time_periods_buttons, width=3)
     return InlineKeyboardMarkup(inline_keyboard=builder.export())
 
+def get_type_of_commands():
+    builder = KeyboardBuilder(button_type=InlineKeyboardButton)
+    student_level = ['newbie','newbie_plus','junior'] #потом это тоже можно сделать как отдельная таблица и из нее брать данные
+    buttons = []
+    for level in student_level:
+        level_button = InlineKeyboardButton(text=str(level), callback_data=f'level-{str(level)}')
+        buttons.append(level_button)
+    builder.row(*buttons, width=3)
+    return InlineKeyboardMarkup(inline_keyboard=builder.export())
+
 
 kb_choise_main_menu = [
     [types.KeyboardButton(text="Посмотреть информацию")],

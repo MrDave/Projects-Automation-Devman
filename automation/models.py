@@ -48,13 +48,11 @@ class ProjectManager(DevmanUser):
 
 
 class StudyGroup(models.Model):
-
     name = models.CharField(max_length=40, verbose_name='Название команды', null=True, blank=True)
-
-    project = models.ForeignKey(Project, verbose_name="проект", on_delete=models.CASCADE, related_name="groups")
-    manager = models.ForeignKey(ProjectManager, verbose_name="менеджер", on_delete=models.SET_NULL, null=True)
-    call_time = models.ForeignKey(StudyingTime, on_delete=models.SET_NULL, null=True, blank=True)
-    call_day = models.DateTimeField(verbose_name="день созвона")
+    project = models.ForeignKey(Project, verbose_name="проект", null=True, blank=True, on_delete=models.CASCADE, related_name="groups")
+    manager = models.ForeignKey(ProjectManager, verbose_name="менеджер", null=True, blank=True, on_delete=models.CASCADE)
+    call_time = models.ForeignKey(StudyingTime, on_delete=models.CASCADE)
+    call_day = models.DateTimeField(verbose_name="день созвона", null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} - {self.manager}"

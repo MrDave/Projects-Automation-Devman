@@ -6,7 +6,7 @@ from aiogram.filters.state import StatesGroup, State
 
 import logging
 import os
-# from datetime import datetime
+from collections import defaultdict
 from datetime import datetime
 from aiogram.types import Message, CallbackQuery, FSInputFile, InputMediaPhoto
 from aiogram.filters import Command
@@ -24,6 +24,7 @@ from automation.models import *
 from automation.management.commands.bot.user_menu import (
     get_times_shedule,
 )
+from project.settings import LIMIT_USER_IN_TEAM
 
 logging.basicConfig(
     level=logging.INFO,
@@ -75,15 +76,87 @@ async def show_main_menu(message: Message):
 async def create_order(message: Message):
     await message.answer('https://dvmn.org/')
 
-@router.message(F.text == "Сформировать команды")
+@router.message(F.text == "Показать команды")
 async def create_order(message: Message):
+    await message.answer('https://dvmn.org/')
+
+@router.message(F.text == "Сформировать команды")
+async def create_team(message: Message):
+    await bot.send_message(message.from_user.id, 'Укажите тип формируемых команд',
+                           reply_markup=get_type_of_commands())
+
+
+@router.callback_query(F.data.startswith('level-'))
+async def get_level_handler(callback: CallbackQuery):
     # алгоритм :
     # удалить все команды, если какие-либо были ранее
     # по всем студентам сформировать id : время записи
     # организовать цикл по временным слотам
     # ... и формировать новые группы
+    logger.info(f'time handler - {callback.data}')
+    # создание студентов...
+    # T.ODO проверить если уже юзер в студента, иначе новый
 
-    await message.answer('https://dvmn.org/')
+    student_level = callback.data.split('-')[-1]
+
+    students = []
+    await sync_to_async(StudyGroup.objects.all().delete)()
+    async for student in Student.objects.all().order_by('preferred_time'):
+        students.append(student)
+
+    # for _ in students:
+    #     print(_)
+    # posts_with_comments = Post.objects.filter(id__in=most_popular_posts_ids).annotate(comments_count=Count('comments'))
+    students = await sync_to_async(Student.objects.all)()
+    student_id_time_id_qs = await sync_to_async(students.values_list)('id', 'preferred_time') #ключ-это id cтудента, значение - id времени слота
+    student_id_time_id = await sync_to_async(dict)(student_id_time_id_qs)
+    # sstudent = student_id_time_id.items()
+    # student_id_time_id = await sync_to_async(dict)(student_id_time_id_qs.items)()
+    # student_id_time_id = await sync_to_async(dict(student_id_time_id_qs).items)()
+    # d = defaultdict(list)
+    # for k, v in sstudent:
+    #     d[k].append(v)
+
+    # search_student_list = sorted(d.items())
+
+
+    # цикл по слотам, исключая слот-время, которое "задаст ПМ сам", т.е. только по реальным указанным
+    # await studying_time_slot = StudyingTime.objects.all().order_by('start_time')
+    async for time_slot in StudyingTime.objects.all().order_by('start_time')[1:]:
+        # цикл по студентам из словаря
+        total_members = 0
+        team = None
+        students_with_the_same_time = [key for key in student_id_time_id if student_id_time_id[key] == time_slot.id]
+        for student_id in students_with_the_same_time:
+            if total_members==0:
+                team = StudyGroup(name=f"Команда уровня {student_level} созвон с {time_slot} ", call_time=time_slot)
+                await sync_to_async(team.save)()
+                await sync_to_async(Student.objects.filter(id=student_id).update)(current_group=team)
+                total_members += 1
+            else:
+                await sync_to_async(Student.objects.filter(id=student_id).update)(current_group=team)
+                total_members += 1
+                if total_members > LIMIT_USER_IN_TEAM:
+                    total_members = 0
+
+    # есть команды или нет ни одной, но тогда случай, когда Время по Выбору ПМ
+    if await sync_to_async(StudyGroup.objects.all)():
+        # цикл по командам, проверять места и добавлять или создавать новые
+        # считать сколько чел без времени
+        pass
+
+    else:
+        pass
+
+        #думать !!!!
+
+        #просто создать и всем её указать, нужно дорабатывать логику...
+        # team_non_time = sync_to_async(StudyGroup(name=f"Команда уровня {student_level} время созвона не указано", call_time=sync_to_async(StudyingTime.objects.all().order_by('start_time').first)()))()
+        # await sync_to_async(team_non_time.save)()
+        # await sync_to_async(Student.objects.filter(preferred_time=StudyingTime.objects.all().order_by('start_time').first()).update)(current_group=team_non_time)
+
+
+    await bot.send_message(callback.from_user.id, 'iэnfo')
 
 
 @router.message(F.text == "Записаться на время")

@@ -75,6 +75,16 @@ async def show_main_menu(message: Message):
 async def create_order(message: Message):
     await message.answer('https://dvmn.org/')
 
+@router.message(F.text == "Сформировать команды")
+async def create_order(message: Message):
+    # алгоритм :
+    # удалить все команды, если какие-либо были ранее
+    # по всем студентам сформировать id : время записи
+    # организовать цикл по временным слотам
+    # ... и формировать новые группы
+
+    await message.answer('https://dvmn.org/')
+
 
 @router.message(F.text == "Записаться на время")
 async def choise_time_shedule(message: Message):

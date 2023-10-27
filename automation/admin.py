@@ -7,6 +7,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "level",
+        "preferred_time",
     )
 
 

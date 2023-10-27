@@ -31,7 +31,6 @@ main_menu = types.ReplyKeyboardMarkup(
 kb_choise_main_menu_pm = [
     [types.KeyboardButton(text="Показать команды")],
     [types.KeyboardButton(text="Сформировать команды")],
-    [types.KeyboardButton(text="Сформировать команды")],
     [types.KeyboardButton(text="Оповестить участников")],
 ]
 main_menu_pm = types.ReplyKeyboardMarkup(

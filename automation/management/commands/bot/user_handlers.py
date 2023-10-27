@@ -1,4 +1,5 @@
 from aiogram import Router, F, Bot
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.state import StatesGroup, State
@@ -64,7 +65,11 @@ async def start_command_handler(message: Message):
 @router.message(F.text == "Оповестить участников")
 async def show_main_menu(message: Message):
     async for user in DevmanUser.objects.all().order_by('telegram_id'):
-        await bot.send_message(str(user.telegram_id), f'Проверка рассылки и т.д...')
+        try:
+            await bot.send_message(str(user.telegram_id), f'Проверка рассылки и т.д...')
+        except TelegramBadRequest:
+            await bot.send_message(message.from_user.id, f'Пользователь телеграмм {str(user.telegram_id)} не существует')
+
 
 @router.message(F.text == "О Devman...")
 async def create_order(message: Message):
@@ -87,12 +92,15 @@ async def get_time_handler(callback: CallbackQuery):
     # posts = await sync_to_async(name.devman_user.all)()
 
     time_shudule_id = callback.data.split('_')[-1]
-    user_name = await sync_to_async(DevmanUser.objects.filter(telegram_id=callback.from_user.id).first)()
-    start_time = await sync_to_async(StudyingTime.objects.filter(pk=time_shudule_id).first)()
+    if time_shudule_id=='Error':
+        await bot.send_message(callback.from_user.id, "Свяжитесь с вашим ментором...")
+    else:
+        user_name = await sync_to_async(DevmanUser.objects.filter(telegram_id=callback.from_user.id).first)()
+        start_time = await sync_to_async(StudyingTime.objects.filter(pk=time_shudule_id).first)()
 
-    info = f'Студент создан {datetime.datetime.now()}.\nУказал удобное время {start_time}'
-    # type = 'newbie' т.к. это уровень задаст ПМ в админке
-    student = Student(user=user_name, level='newbie', preferred_time=start_time, info=info)
-    await sync_to_async(student.save)()
-    await bot.send_message(callback.from_user.id, info)
+        info = f'Студент создан {datetime.datetime.now()}.\nУказал удобное время {start_time}'
+        # type = 'newbie' т.к. это уровень задаст ПМ в админке
+        student = Student(user=user_name, level='newbie', preferred_time=start_time, info=info)
+        await sync_to_async(student.save)()
+        await bot.send_message(callback.from_user.id, info)
 

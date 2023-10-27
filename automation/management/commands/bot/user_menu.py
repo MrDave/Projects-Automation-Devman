@@ -13,7 +13,7 @@ async def get_times_shedule():
         time_button = InlineKeyboardButton(text=str(time_choise.start_time), callback_data=f'time_{time_choise.pk}')
         time_periods_buttons.append(time_button)
     else:
-        time_periods_buttons.append(InlineKeyboardButton(text=str('123'), callback_data=f'time_-1'))
+        time_periods_buttons.append(InlineKeyboardButton(text=str(' Необходимо согласовать с ПМ\nhttps://dvmn.org/'), callback_data=f'time_Error'))
     builder.row(*time_periods_buttons, width=3)
     return InlineKeyboardMarkup(inline_keyboard=builder.export())
 

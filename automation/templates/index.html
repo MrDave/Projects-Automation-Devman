@@ -1,0 +1,16 @@
+{% extends 'layout.html'%}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+  <div class="features">
+    <h1>Выберете ваш статус</h1>
+    <p></p>
+    <a href="{% url 'students' %}"><button class="btn btn-warning">Студент</button></a><br>
+    <br>
+    <a href="{% url 'pms' %}"><button class="btn btn-warning">Продукт менеджер</button></a><br>
+
+
+
+  </div>
+{% endblock %}

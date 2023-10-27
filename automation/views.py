@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Student
-from .forms import StudentForm
+from .forms import DevmanUserForm
 
 def index(request):
     return render(request, 'index.html')
@@ -9,14 +9,14 @@ def index(request):
 def students(request):
     error = ''
     if request.method == 'POST':
-        form = StudentForm(request.POST)
+        form = DevmanUserForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('home')
         else:
             error = 'Форма была неверной'
 
-    form = StudentForm()
+    form = DevmanUserForm()
     data = {
         'form': form,
         'error': error

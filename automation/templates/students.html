@@ -7,9 +7,9 @@
     <h1>Заполните форму Студента</h1>
     <form method="post">
         {% csrf_token %}<br>
-        {{ form.name }}<br>
+        {{ form.first_name }}<br>
         {{ form.telegram_id }}<br>
-        {{ form.level }}<br>
+        {{ form.email }}<br>
 
         <span>{{ error }}</span>
 

@@ -1,14 +1,14 @@
-from .models import Student
+from .models import Student, DevmanUser
 from django.forms import ModelForm, TextInput,Select, DateTimeInput, Textarea
 
 
-class StudentForm(ModelForm):
+class DevmanUserForm(ModelForm):
     class Meta:
-        model = Student
-        fields = ['name', 'telegram_id', 'level']
+        model = DevmanUser
+        fields = ['first_name', 'telegram_id', 'email']
 
         widgets = {
-            "name": TextInput(attrs={
+            "first_name": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'ФИО'
             }),
@@ -16,7 +16,7 @@ class StudentForm(ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Телеграмм ID'
             }),
-             "level": Select(attrs={
+             "email": TextInput(attrs={
                 'class': 'form-control'
             }),
 

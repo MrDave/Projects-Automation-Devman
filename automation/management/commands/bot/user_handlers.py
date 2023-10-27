@@ -45,7 +45,7 @@ async def start_command_handler(message: Message):
     """
     user_id = await sync_to_async(DevmanUser.objects.filter(telegram_id=int(message.from_user.id)).first)()
     if not user_id:
-        user_id = DevmanUser(telegram_id=int(message.from_user.id), first_name=message.from_user.first_name, created_at=datetime.datetime.now())
+        user_id = DevmanUser(telegram_id=int(message.from_user.id), first_name=message.from_user.first_name)
         await sync_to_async(user_id.save)()
         await bot.send_message(message.from_user.id, f'Привет {message.from_user.first_name}\nВас приветствует учебный бот DEVMAN', reply_markup=main_menu)
     else:
@@ -92,7 +92,7 @@ async def get_time_handler(callback: CallbackQuery):
 
     info = f'Студент создан {datetime.datetime.now()}.\nУказал удобное время {start_time}'
     # type = 'newbie' т.к. это уровень задаст ПМ в админке
-    student = Student(name=user_name, type='newbie', start=start_time, info=info)
+    student = Student(user=user_name, level='newbie', preferred_time=start_time, info=info)
     await sync_to_async(student.save)()
     await bot.send_message(callback.from_user.id, info)
 

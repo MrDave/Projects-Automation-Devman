@@ -12,6 +12,8 @@ async def get_times_shedule():
     async for time_choise in time_periods:
         time_button = InlineKeyboardButton(text=str(time_choise.start_time), callback_data=f'time_{time_choise.pk}')
         time_periods_buttons.append(time_button)
+    else:
+        time_periods_buttons.append(InlineKeyboardButton(text=str('123'), callback_data=f'time_-1'))
     builder.row(*time_periods_buttons, width=3)
     return InlineKeyboardMarkup(inline_keyboard=builder.export())
 

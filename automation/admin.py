@@ -8,8 +8,12 @@ class StudentAdmin(admin.ModelAdmin):
         "user",
         "level",
         "preferred_time",
+        "current_group",
     )
 
+class StudentInTeam(admin.TabularInline):
+    model = StudyGroup
+    extra = 0
 
 @admin.register(DevmanUser)
 class DevmanUserAdmin(admin.ModelAdmin):
@@ -27,7 +31,7 @@ class StudyGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    pass
+    inlines = [StudentInTeam]
 
 
 @admin.register(ProjectManager)

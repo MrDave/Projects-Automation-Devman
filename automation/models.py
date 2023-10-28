@@ -40,6 +40,7 @@ class StudyingTime(models.Model):
         return f"{self.start_time}"
 
 
+
 class ProjectManager(DevmanUser):
     info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
 
@@ -66,7 +67,7 @@ class Student(models.Model):
     ]
     user = models.ForeignKey(DevmanUser, on_delete=models.CASCADE, related_name="devman_user")
     level = models.CharField("уровень студента", choices=STUDENT_LEVELS, default="newbie", max_length=12)
-    preferred_time = models.ForeignKey(StudyingTime, verbose_name='Время созвона', on_delete=models.SET_DEFAULT, default="любое время")
+    preferred_time = models.ForeignKey(StudyingTime, verbose_name='Время созвона', on_delete=models.SET_NULL, null=True)
     info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
     current_group = models.ForeignKey(
         StudyGroup,

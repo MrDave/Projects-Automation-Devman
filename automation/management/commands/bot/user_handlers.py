@@ -53,6 +53,13 @@ async def start_command_handler(message: Message):
                                    reply_markup=main_menu)
 
 
+def send_message_to_user(text , user_id):
+    try:
+        bot.send_message(str(user_id), text)
+    except TelegramBadRequest:
+        logging.warning(f'Не верный id номер при оповещении пользователя {user_id}')
+
+
 @router.message(F.text == "Оповестить участников")
 async def show_main_menu(message: Message):
     async for user in DevmanUser.objects.all().order_by('telegram_id'):
@@ -60,6 +67,23 @@ async def show_main_menu(message: Message):
             await bot.send_message(str(user.telegram_id), f'Проверка рассылки и т.д...')
         except TelegramBadRequest:
             await bot.send_message(message.from_user.id, f'Пользователь телеграмм {str(user.telegram_id)} не существует')
+
+@router.message(F.text == "Оптимизировать команды")
+async def show_main_menu(message: Message):
+    # проход по командам, если 1  чел, то удалить такую и юзеру скинуть мессагу, что необходими выбрать другое время
+    time_zero = await sync_to_async(StudyingTime.objects.get)(start_time='00:00:00')
+    async for team in StudyGroup.objects.all():
+        members_in_team = await sync_to_async(team.groups.all)()
+        count_student_in_team = await sync_to_async(members_in_team.count)()
+        if count_student_in_team==1:
+            # удалить команду
+            one_student_in_team_qs = await sync_to_async(team.groups.all)()
+            one_student_in_team = await sync_to_async(one_student_in_team_qs.first)()
+            await sync_to_async(Student.objects.filter(id=one_student_in_team.id).update)(current_group=None,
+                                                                                   preferred_time=time_zero)
+            # await send_message_to_user(str(one_student_in_team.user.telegram_id), "Товарищь студент, к сожалению на выбранное вами время не набралось достаточное кол-во участников, укажите другое время")
+            await sync_to_async(StudyGroup.objects.filter(id=team.id).delete)()
+    await message.answer('Успешно...')
 
 
 @router.message(F.text == "О Devman...")

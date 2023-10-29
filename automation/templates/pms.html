@@ -7,6 +7,11 @@
     <h1>Заполните форму Продукт-менеджера</h1>
     <form method="post">
         {% csrf_token %}<br>
+        {{ form.first_name }}<br>
+        {{ form.telegram_id }}<br>
+        {{ form.email }}<br>
+
+        <span>{{ error }}</span>
 
 
         <button class="btn btn-success" type="submit">Отправить информацию</button>

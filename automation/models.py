@@ -40,7 +40,6 @@ class StudyingTime(models.Model):
         return f"{self.start_time}"
 
 
-
 class ProjectManager(DevmanUser):
     info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
 
@@ -50,8 +49,21 @@ class ProjectManager(DevmanUser):
 
 class StudyGroup(models.Model):
     name = models.CharField(max_length=40, verbose_name='Название команды', null=True, blank=True)
-    project = models.ForeignKey(Project, verbose_name="проект", null=True, blank=True, on_delete=models.CASCADE, related_name="groups")
-    manager = models.ForeignKey(ProjectManager, verbose_name="менеджер", null=True, blank=True, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        Project,
+        verbose_name="проект",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="groups"
+    )
+    manager = models.ForeignKey(
+        ProjectManager,
+        verbose_name="менеджер",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     call_time = models.ForeignKey(StudyingTime, on_delete=models.CASCADE)
     call_day = models.DateTimeField(verbose_name="день созвона", null=True, blank=True)
 

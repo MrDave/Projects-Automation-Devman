@@ -48,13 +48,24 @@ class ProjectManager(DevmanUser):
 
 
 class StudyGroup(models.Model):
-
     name = models.CharField(max_length=40, verbose_name='Название команды', null=True, blank=True)
-
-    project = models.ForeignKey(Project, verbose_name="проект", on_delete=models.CASCADE, related_name="groups")
-    manager = models.ForeignKey(ProjectManager, verbose_name="менеджер", on_delete=models.SET_NULL, null=True)
-    call_time = models.ForeignKey(StudyingTime, on_delete=models.SET_NULL, null=True, blank=True)
-    call_day = models.DateTimeField(verbose_name="день созвона")
+    project = models.ForeignKey(
+        Project,
+        verbose_name="проект",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="groups"
+    )
+    manager = models.ForeignKey(
+        ProjectManager,
+        verbose_name="менеджер",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    call_time = models.ForeignKey(StudyingTime, on_delete=models.CASCADE)
+    call_day = models.DateTimeField(verbose_name="день созвона", null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} - {self.manager}"
@@ -68,13 +79,14 @@ class Student(models.Model):
     ]
     user = models.ForeignKey(DevmanUser, on_delete=models.CASCADE, related_name="devman_user")
     level = models.CharField("уровень студента", choices=STUDENT_LEVELS, default="newbie", max_length=12)
-    preferred_time = models.ForeignKey(StudyingTime, on_delete=models.SET_DEFAULT, default="любое время")
+    preferred_time = models.ForeignKey(StudyingTime, verbose_name='Время созвона', on_delete=models.SET_NULL, null=True)
     info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
     current_group = models.ForeignKey(
         StudyGroup,
         verbose_name="текущая группа",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="groups"
     )
 

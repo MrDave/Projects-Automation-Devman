@@ -1,0 +1,21 @@
+{% extends 'layout.html'%}
+
+{% block title %}База учеников{% endblock %}
+
+{% block content %}
+  <div class="features">
+    <h1>База учеников</h1>
+    {% if students_all %}
+      {% for el in students_all %}
+        <div class="alert alert-warning">
+          <h3> </h3>
+          <p>ФИО: {{ el.first_name }} ТГ: {{ el.telegram_id}} эл. почта: {{el.email}}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>нет записей</p>
+    {% endif %}
+
+
+  </div>
+{% endblock %}
